@@ -1,0 +1,18 @@
+FROM pytorchignite/apex-vision:1.9.0-0.4.7
+ENV EPOCHS 1
+
+COPY ditto/requirements.txt /app/ditto/requirements.txt
+RUN pip install -r /app/ditto/requirements.txt
+
+COPY ./docker-entrypoint /app/docker-entrypoint
+COPY ./ditto/ /app/ditto/
+
+
+WORKDIR /app/
+
+RUN python ditto/nltk_download.py
+RUN python -m spacy download en_core_web_lg
+RUN chmod +x docker-entrypoint
+
+CMD ["./docker-entrypoint"]
+

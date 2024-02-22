@@ -1,0 +1,19 @@
+FROM pytorchignite/apex-vision:1.9.0-0.4.7
+ENV EPOCHS 1
+
+ENV DEBIAN_FRONTEND noninteractive
+RUN apt-get update && \
+    apt-get -y install gcc mono-mcs g++ wget unzip && \
+    rm -rf /var/lib/apt/lists/*
+
+COPY deepmatcher/requirements.txt /app/deepmatcher/requirements.txt
+RUN pip install -r /app/deepmatcher/requirements.txt
+
+COPY ./deepmatcher/ /app/deepmatcher/ 
+
+COPY ./docker-entrypoint /app/docker-entrypoint
+
+WORKDIR /app/
+RUN chmod +x docker-entrypoint
+
+CMD ["./docker-entrypoint"]

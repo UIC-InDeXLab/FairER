@@ -1,0 +1,17 @@
+FROM pytorchignite/apex-vision
+ENV EPOCHS 1
+
+
+COPY ./docker-entrypoint /app/docker-entrypoint
+COPY ./GNEM/requirements.txt /app/GNEM/requirements.txt
+RUN pip install -r /app/GNEM/requirements.txt
+
+COPY ./GNEM/ /app/GNEM/
+
+
+WORKDIR /app/
+RUN sed -i "689s/.*/        extended_attention_mask = extended_attention_mask.to(dtype=torch.float32)/" /opt/conda/lib/python3.10/site-packages/pytorch_transformers/modeling_bert.py
+RUN chmod +x docker-entrypoint
+
+CMD ["./docker-entrypoint"]
+

@@ -1,0 +1,25 @@
+FROM dreamquark/brain-base-python:3.6.7-cuda8-cudnn6
+ENV EPOCHS 1
+
+ENV DEBIAN_FRONTEND noninteractive
+RUN apt-get update && \
+    apt-get -y install gcc mono-mcs g++ wget unzip && \
+    rm -rf /var/lib/apt/lists/*
+
+COPY ./docker-entrypoint /app/docker-entrypoint
+COPY ./MCAN/requirements.txt /app/MCAN/requirements.txt
+
+WORKDIR /app/
+
+RUN pip install -r MCAN/requirements.txt
+
+COPY ./MCAN/ /app/MCAN/
+
+RUN pip install MCAN/torch-0.3.1-cp36-cp36m-linux_x86_64.whl
+RUN python MCAN/nltk_download.py
+
+
+RUN chmod +x docker-entrypoint
+
+CMD ["./docker-entrypoint"]
+
